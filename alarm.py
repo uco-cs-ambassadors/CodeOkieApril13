@@ -32,7 +32,8 @@ lcd.clear()
 lcd.color = [50, 0, 50]
 led.off()
 
-
+# Arm the system. Sets the motion sensor variable to true and displays a message
+# on the LCD screen
 def alarm_on():
     # To change the initialized variable above, must redefine it here as 'global'
     global motion_sensor_on
@@ -48,7 +49,9 @@ def alarm_on():
         sleep(1)
     lcd.clear()
     lcd.message = 'Alarm is on'
-    
+
+# Disarm the system. Sets the motion sensor and alarm triggered variables to false.
+# Turns off led and buzzer. Displays a message on the LCD screen. Stops the video recording.
 def alarm_off():
     global motion_sensor_on
     motion_sensor_on = False
@@ -62,15 +65,20 @@ def alarm_off():
     if camera.recording:
         camera.stop_recording()
 
+# Command to take three pictures
 def take_picture():
     for i in range(3):
         camera.capture('/home/pi/Desktop/Pics/image%s.jpg' % str(datetime.now()))
         sleep(0.5)
 
+# Command to shoot video
 def shoot_video():
     if camera.recording == False:
         camera.start_recording('/home/pi/Desktop/Pics/video%s.mjpeg' % str(datetime.now()))
 
+# Command to sound the alarm. Sets the alarm triggered variable to true. 
+# LCD Displays message, led blinks, buzzer blinks, 3 pictures are taken,
+# and video begins
 def sound_alarm():
     global alarmTriggered
     alarmTriggered = True
@@ -81,9 +89,11 @@ def sound_alarm():
     buzzer.blink()
     take_picture()
     shoot_video()
-            
+
+# Logic loop for alarm system
 while True:
-    # Wait for a button press
+    # Wait for a button press. Select button allows user to arm or disarm
+    # the system
     if lcd.select_button:
         if motion_sensor_on:
             alarm_off()
